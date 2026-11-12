@@ -21,16 +21,16 @@ Cloudflare Pages では、以下のいずれかの方法で簡単に公開でき
    - 左側メニューの **「Workers & Pages」** > **「作成」 (Create application)** をクリック。
    - **「Pages」** タブを選択し、**「Git に接続」 (Connect to Git)** をクリック。
 3. **リポジトリの選択**
-   - 本プロジェクトの GitHub リポジトリ（例: `school-trip-petition`）を選択。
+   - 本プロジェクトの GitHub リポジトリ（例: `talus-daise/school-trip-signature-app`）を選択。
 4. **ビルド設定の入力**
-   - **プロジェクト名**: `school-trip-petition`（任意の名前）
+   - **プロジェクト名**: `school-trip-signature-app`（任意の名前）
    - **本番ブランチ**: `main` (または作業ブランチ)
    - **フレームワーク プリセット**: `Vite` を選択
    - **ビルド コマンド**: `npm run build`
    - **ビルド出力ディレクトリ**: `dist`
    - **Node.js バージョン（環境変数）**: 必要に応じて `NODE_VERSION` を `20` または `22` に設定
 5. **「保存してデプロイ」をクリック**
-   - 約1分でビルドが完了し、`https://school-trip-petition.pages.dev` のような公開URLが発行されます。
+   - 約1分でビルドが完了し、`https://school-trip-signature-app.pages.dev` のような公開URLが発行されます。
 
 ---
 
@@ -48,7 +48,7 @@ Cloudflare Pages では、以下のいずれかの方法で簡単に公開でき
    ```bash
    npm run pages:deploy
    ```
-   初回実行時はプロジェクト名（デフォルト: `school-trip-petition`）を確認されます。
+   初回実行時はプロジェクト名（デフォルト: `school-trip-signature-app`）を確認されます。
    デプロイが完了すると即座に公開URLが表示されます。
 
 ---
@@ -78,4 +78,4 @@ Cloudflare Pages では、以下のいずれかの方法で簡単に公開でき
 - **ビルドエラーが発生する場合**:
   Cloudflare Pages の設定画面で「環境変数」に `NODE_VERSION = 20` を追加してください。
 - **データのリセットや確認**:
-  署名データはブラウザの `localStorage` に安全に保管されます。管理者は右上の「管理・集計出力」モーダルからいつでも全件CSVダウンロードおよび学校・知道会提出用文書の生成が可能です。
+  署名データは D1 に保存されます（API に接続できない場合のみ、従来どおりブラウザの `localStorage` にフォールバックします）。管理者は右上の「管理・集計出力」モーダルからいつでも全件CSVダウンロードおよび学校・知道会提出用文書の生成が可能です。

@@ -1,5 +1,5 @@
 {
-  "name": "school-trip-petition",
+  "name": "school-trip-signature-app",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -10,7 +10,10 @@
     "test": "vitest run",
     "preview": "vite preview",
     "pages:deploy": "npm run build && wrangler pages deploy dist",
-    "pages:dev": "wrangler pages dev dist"
+    "pages:dev": "wrangler pages dev dist",
+    "db:create": "wrangler d1 create school-trip-signatures",
+    "db:migrate:local": "wrangler d1 migrations apply school-trip-signatures --local",
+    "db:migrate:remote": "wrangler d1 migrations apply school-trip-signatures --remote"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",

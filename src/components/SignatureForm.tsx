@@ -4,7 +4,9 @@ import type { DisplayOption, RoleType, Signature } from '../types';
 import confetti from 'canvas-confetti';
 
 interface SignatureFormProps {
-  onSubmit: (signature: Omit<Signature, 'id' | 'createdAt'>) => { success: boolean; error?: string };
+  onSubmit: (
+    signature: Omit<Signature, 'id' | 'createdAt'>,
+  ) => Promise<{ success: boolean; error?: string }>;
 }
 
 export const SignatureForm: React.FC<SignatureFormProps> = ({ onSubmit }) => {
@@ -20,8 +22,9 @@ export const SignatureForm: React.FC<SignatureFormProps> = ({ onSubmit }) => {
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -40,21 +43,26 @@ export const SignatureForm: React.FC<SignatureFormProps> = ({ onSubmit }) => {
       return;
     }
 
-    const result = onSubmit({
-      name: name.trim(),
-      role,
-      grade: role === 'student' ? grade : undefined,
-      classRoom: role === 'student' ? classRoom : undefined,
-      identifier: identifier.trim(),
-      displayOption,
-      destinationIdea: destinationIdea.trim() || undefined,
-      message: message.trim() || undefined,
-      agreedToTerms,
-    });
+    setSubmitting(true);
+    try {
+      const result = await onSubmit({
+        name: name.trim(),
+        role,
+        grade: role === 'student' ? grade : undefined,
+        classRoom: role === 'student' ? classRoom : undefined,
+        identifier: identifier.trim(),
+        displayOption,
+        destinationIdea: destinationIdea.trim() || undefined,
+        message: message.trim() || undefined,
+        agreedToTerms,
+      });
 
-    if (!result.success) {
-      setError(result.error || 'エラーが発生しました。');
-      return;
+      if (!result.success) {
+        setError(result.error || 'エラーが発生しました。');
+        return;
+      }
+    } finally {
+      setSubmitting(false);
     }
 
     setSuccess(true);
@@ -73,8 +81,8 @@ export const SignatureForm: React.FC<SignatureFormProps> = ({ onSubmit }) => {
   };
 
   return (
-    <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-8" id="sign-form">
-      <div className="flex items-center gap-2 mb-2 text-indigo-600 font-bold text-sm">
+    <section className="bg-white rounded-lg border border-rule p-6 sm:p-8 mb-8" id="sign-form">
+      <div className="flex items-center gap-2 mb-2 text-navy font-bold text-sm">
         <ShieldCheck className="w-4 h-4" />
         署名入力フォーム（デジタル管理・紛失防止）
       </div>
@@ -128,7 +136,7 @@ export const SignatureForm: React.FC<SignatureFormProps> = ({ onSubmit }) => {
                 key={item.id}
                 className={`flex items-center justify-center p-3 rounded-xl border text-sm font-medium cursor-pointer transition-all ${
                   role === item.id
-                    ? 'border-indigo-600 bg-indigo-50 text-indigo-700 shadow-sm font-bold'
+                    ? 'border-navy bg-paper text-navy shadow-sm font-bold'
                     : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                 }`}
               >
@@ -156,7 +164,7 @@ export const SignatureForm: React.FC<SignatureFormProps> = ({ onSubmit }) => {
               <select
                 value={grade}
                 onChange={(e) => setGrade(e.target.value)}
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy"
               >
                 <option value="1年生">1年生</option>
                 <option value="2年生">2年生</option>
@@ -170,7 +178,7 @@ export const SignatureForm: React.FC<SignatureFormProps> = ({ onSubmit }) => {
               <select
                 value={classRoom}
                 onChange={(e) => setClassRoom(e.target.value)}
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy"
               >
                 <option value="1組">1組</option>
                 <option value="2組">2組</option>
@@ -194,7 +202,7 @@ export const SignatureForm: React.FC<SignatureFormProps> = ({ onSubmit }) => {
               placeholder="例: 山田 太郎"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy focus:bg-white"
               required
             />
             <span className="text-xs text-slate-400 mt-1 block">
@@ -211,7 +219,7 @@ export const SignatureForm: React.FC<SignatureFormProps> = ({ onSubmit }) => {
               placeholder="例: s123456 または xxx@example.com"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy focus:bg-white"
               required
             />
             <span className="text-xs text-slate-400 mt-1 block">
@@ -238,7 +246,7 @@ export const SignatureForm: React.FC<SignatureFormProps> = ({ onSubmit }) => {
                   value={opt.id}
                   checked={displayOption === opt.id}
                   onChange={(e) => setDisplayOption(e.target.value as DisplayOption)}
-                  className="text-indigo-600 focus:ring-indigo-500"
+                  className="text-navy focus:ring-navy"
                 />
                 {opt.label}
               </label>
@@ -256,7 +264,7 @@ export const SignatureForm: React.FC<SignatureFormProps> = ({ onSubmit }) => {
             placeholder="例: 沖縄（自然環境と平和学習）、京都・奈良（歴史文化体験）、北海道（探究活動）など"
             value={destinationIdea}
             onChange={(e) => setDestinationIdea(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+            className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy focus:bg-white"
           />
         </div>
 
@@ -270,18 +278,18 @@ export const SignatureForm: React.FC<SignatureFormProps> = ({ onSubmit }) => {
             placeholder="例: 150周年の特別な思い出として、ぜひみんなで行きたいです！先生方や知道会の皆様、応援よろしくお願いいたします！"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+            className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy focus:bg-white"
           />
         </div>
 
         {/* 同意チェック */}
-        <div className="bg-indigo-50/60 border border-indigo-100 rounded-xl p-4">
+        <div className="bg-paper border border-rule rounded-xl p-4">
           <label className="flex items-start gap-3 cursor-pointer">
             <input
               type="checkbox"
               checked={agreedToTerms}
               onChange={(e) => setAgreedToTerms(e.target.checked)}
-              className="mt-1 w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500"
+              className="mt-1 w-4 h-4 text-navy rounded border-slate-300 focus:ring-navy"
             />
             <span className="text-xs sm:text-sm text-slate-700 leading-relaxed">
               私は「創立150周年を機に修学旅行を復活させる」という趣旨に賛同し、
@@ -293,10 +301,11 @@ export const SignatureForm: React.FC<SignatureFormProps> = ({ onSubmit }) => {
         {/* 送信ボタン */}
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 text-base cursor-pointer"
+          disabled={submitting}
+          className="w-full bg-navy hover:bg-ink text-white font-bold py-3.5 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 text-base cursor-pointer disabled:opacity-60 disabled:cursor-wait"
         >
           <Send className="w-5 h-5" />
-          署名を送信して賛同する
+          {submitting ? '送信しています…' : '署名を送信して賛同する'}
         </button>
       </form>
     </section>
