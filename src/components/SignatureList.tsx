@@ -10,10 +10,10 @@ interface SignatureListProps {
 
 export const SignatureList: React.FC<SignatureListProps> = ({ signatures }) => {
   return (
-    <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-8">
+    <section className="bg-white rounded-lg border border-rule p-6 sm:p-8 mb-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md">
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-navy px-2.5 py-1">
             <MessageSquareQuote className="w-3.5 h-3.5" />
             賛同者の声 &amp; 応援メッセージ
           </span>
@@ -30,12 +30,12 @@ export const SignatureList: React.FC<SignatureListProps> = ({ signatures }) => {
           signatures.map((sig) => (
             <div
               key={sig.id}
-              className="p-4 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-slate-50 transition-colors"
+              className="p-4 rounded-lg border border-rule bg-paper transition-colors"
             >
               <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-1.5">
-                    <UserCheck className="w-4 h-4 text-indigo-500" />
+                    <UserCheck className="w-4 h-4 text-navy" />
                     {formatDisplayName(sig)}
                   </span>
                   <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">

@@ -1,3 +1,13 @@
-name = "school-trip-petition"
+name = "school-trip-signature-app"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "dist"
+
+# D1 (SQLite) — 署名の共有保存先。Pages Functions から env.DB で使う。
+# database_id は `npx wrangler d1 create school-trip-signatures` で発行された
+# 実際の UUID に置き換えること。下の 00000000-... はローカル開発用の仮の値で、
+# 本番では使えない。詳しくは docs/D1_SETUP.md を参照。
+[[d1_databases]]
+binding = "DB"
+database_name = "school-trip-signatures"
+database_id = "325b1ef3-9077-4460-9fde-d137371e8c28"
+migrations_dir = "migrations"
